@@ -211,8 +211,8 @@ Contributions are welcome! Please feel free to submit a Pull Request. For major 
 
 ## Credits
 - [Acidanthera team](https://github.com/acidanthera) for OpenCorePkg and kexts.
-- [Corpnewt](https://github.com/corpnewt) for ProperTree, GenSMBIOS.
-- [Dortania guide](https://dortania.github.io/) for comprehensive guides.
+- [CorpNewt](https://github.com/corpnewt) for ProperTree, GenSMBIOS.
+- [Dortania](https://dortania.github.io/) for comprehensive guides.
 
 ## Disclaimer
 This project is provided “as‑is”, without any warranty, for educational and research purposes. In no event shall the authors or contributors be liable for any direct, indirect, incidental, special, or consequential damages arising from use of the project, even if advised of the possibility of such damages.
