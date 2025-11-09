@@ -195,6 +195,14 @@ Add an **additional CD/DVD drive** for the macOS installer or Recovery ISO, then
 > qm set $VMID -args "$ARGS -global ICH9-LPC.acpi-pci-hotplug-with-bridge-support=off"
 > ```
 
+> [!Tip]
+> For modern macOS versions, if you need a dummy virtual sound device (e.g., for **Parsec**), run the following command in the Proxmox VE shell:
+> ```
+> clear; read -p "Enter your macOS VM ID number: " VMID; \
+> ARGS="$(qm config $VMID --current | grep ^args: | cut -d' ' -f2-)"; \
+> qm set $VMID -args "$ARGS -device virtio-sound,audiodev=dummy -audiodev none,id=dummy"
+> ```
+
 ---
 
 ### macOS Tahoe Cursor Freeze Solution
@@ -213,14 +221,6 @@ Add an **additional CD/DVD drive** for the macOS installer or Recovery ISO, then
 > The most reliable solution is to passthrough a physical mouse and keyboard together with an iGPU or dGPU.
 >
 > Alternatively, use a remote desktop solution, e.g. **VNC Screen Sharing** (Settings → General → Sharing) or **Chrome Remote Desktop**.
-
-> [!Tip]
-> For modern macOS versions, if you need a dummy virtual sound device (e.g., for **Parsec**), run the following command in the Proxmox VE shell:
-> ```
-> clear; read -p "Enter your macOS VM ID number: " VMID; \
-> ARGS="$(qm config $VMID --current | grep ^args: | cut -d' ' -f2-)"; \
-> qm set $VMID -args "$ARGS -device virtio-sound,audiodev=dummy -audiodev none,id=dummy"
-> ```
 
 ---
 
