@@ -30,10 +30,9 @@ xorriso -rockridge off -as mkisofs \
   -iso-level 3 \
   -V "${VOL_NAME}" \
   -J -joliet-long\
-  -eltorito-alt-boot \
   -e "${BOOT_IMG}" \
   -no-emul-boot \
-  -isohybrid-gpt-basdat \
+  --boot-catalog-hide \
   -m ".git*" \
   -m "README.md" \
   -m "Make_ISO*" \
