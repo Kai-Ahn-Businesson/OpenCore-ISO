@@ -180,7 +180,7 @@ If you encounter boot issues, check:
 * Secure Boot is **disabled** (`Pre-Enroll Keys` unticked)
 * The ISO is mounted as a **CD/DVD**, not a disk
 * Try different **CPU model**
-* macOS 10.4 Tiger requires USB mouse. Run this in the VM Monitor tab: `device_add usb-mouse`
+* macOS 10.4 Tiger need `-device usb-kbd`. Run this in the VM Monitor tab: `device_add usb-kbd`
 
 ---
 
