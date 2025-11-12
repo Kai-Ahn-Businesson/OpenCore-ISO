@@ -9,12 +9,10 @@ Supports every Intel-based macOS release, from **Mac OS X 10.4 Tiger** through *
 Also compatible with **libvirt** and **Virt-Manager**.
 
 > [!TIP]
-> **For AMD users:**
 > Enjoy a true **vanilla macOS** experience with no kernel patches.
 > This is likely the best way to run macOS on AMD hardware while still retaining full hypervisor access to run other VMs.
-
-> [!Note]
-> **Found this useful?** Give it a ⭐ star to help others discover it!
+>
+> **Found this useful?** Give it a ⭐ star so others can find it too!
 
 ## Table of Contents
 
@@ -46,7 +44,7 @@ Also compatible with **libvirt** and **Virt-Manager**.
 
 > [!CAUTION]
 > These iso are **true CD/DVD ISO image**.
-> Do **NOT** modify VM config to change ***`media=cdrom`*** to ***`media=disk`***.
+> Add them to your VM as a **CD/DVD drive**, not as a disk. Do **NOT** change **`media=cdrom`** to **`media=disk`** in the VM config.
 
 > [!TIP]
 > Run [**`Create_macOS_ISO.command`**](/Create_macOS_ISO.command) inside your VM to download the full macOS installer from Apple and generate a proper DVD-format macOS installer ISO.
@@ -75,7 +73,7 @@ Also compatible with **libvirt** and **Virt-Manager**.
 
 ### 4. System
 
-* **Machine Type**: **q35** *(if you must use `i440fx`, [cpu-models.conf](https://github.com/LongQT-sea/OpenCore-ISO/blob/main/cpu-models.conf) is required)*
+* **Machine Type**: q35 (if using **i440fx**, add `+invtsc` CPU flag, see [cpu-models.conf](https://github.com/LongQT-sea/OpenCore-ISO/blob/main/cpu-models.conf))
 * **BIOS**: OVMF (UEFI)
 * **Add EFI Disk**: ✅ Enabled
 * **Pre-Enroll Keys**: ❌ Untick to disable Secure Boot
@@ -105,6 +103,9 @@ The **disk bus type** depends on your needs:
 
 ### 6. CPU
 
+> [!CAUTION]
+> Follow these CPU settings carefully! Incorrect CPU configuration will cause boot failure.
+
 #### Cores
 
 * Choose based on your hardware: 1 / 2 / 4 / 8 / 16 / 32 / 64
@@ -124,11 +125,14 @@ The **disk bus type** depends on your needs:
 
 > [!NOTE]
 > **AMD CPUs:**
-> * **macOS 10.4 – macOS 12**, tick ✅ **Advanced**, under **Extra CPU Flags**, turn off `pcid` and `spec-ctrl`. [^amdcpu]
-> * **macOS 13 – macOS 26**, set the CPU manually via the Proxmox VE Shell, example:
+> * **macOS 10.4 – macOS 12**, tick ✅ **Advanced**, under **Extra CPU Flags**, turn off `pcid` and `spec-ctrl`. [^amdcpu1]
+> * **macOS 13 – macOS 26**, need to set the CPU manually via the Proxmox VE Shell[^amdcpu2], example:
 >
 >   ```
+>   # For CPUs with AVX2 support
 >   qm set [VMID] --args "-cpu Skylake-Client-v4,vendor=GenuineIntel"
+>   
+>   # For CPUs with AVX-512 support
 >   qm set [VMID] --args "-cpu Skylake-Server-v4,vendor=GenuineIntel"
 >   ```
 > ---
@@ -143,7 +147,7 @@ The **disk bus type** depends on your needs:
 >   ```
 >   qm set [VMID] --args "-cpu Haswell-noTSX,vendor=GenuineIntel,stepping=3"
 >   ```
-> * Avoid using [`host`](https://browser.geekbench.com/v6/cpu/14313138) passthrough CPU types — they can be **~30% slower (single-core)** and **~44% slower (multi-core)** compared to [`recommended`](https://browser.geekbench.com/v6/cpu/14205183) CPU types.
+> * Avoid using [`host`](https://browser.geekbench.com/v6/cpu/14313138) passthrough CPU types[^hostcpu] — they can be **~30% slower (single-core)** and **~44% slower (multi-core)** compared to [`recommended`](https://browser.geekbench.com/v6/cpu/14205183) CPU types.
 
 For more details, see [QEMU CPU Guide – macOS Guests](https://github.com/LongQT-sea/qemu-cpu-guide?#macos-guests).
 
@@ -170,12 +174,14 @@ Choose the correct adapter based on macOS version:
 
 ### 9. Finalize
 
-Add an **additional CD/DVD drive** for the macOS installer or Recovery ISO, then start the VM to proceed with the installation of macOS.
+Add an **additional CD/DVD drive** for the macOS installer or Recovery ISO, then start the VM to begin installation.
+
 > [!Tip]
-> * First-time installation? Open **Disk Utility** to format your hard disk before proceeding with the macOS installation.
-> * Skip the iCloud login screen if prompted, see [Post-Install](#post-install) for iCloud setup instructions.
+> * First-time installing macOS? Format the disk in **Disk Utility** before installing macOS.
+> * **Skip iCloud login** during setup (configure it later, see [Post-Install](#post-install))
 
 ### 10. Troubleshooting
+
 If you encounter boot issues, check:
 * Secure Boot is **disabled** (`Pre-Enroll Keys` unticked)
 * The ISO is mounted as a **CD/DVD**, not a disk
@@ -194,7 +200,7 @@ If you encounter boot issues, check:
    * You can now remove the **LongQT-OpenCore** ISO CD/DVD from the VM **Hardware** tab.
 
 ### 2. To enable iCloud, iMessage, and other iServices:
-   * Follow [Dortania iServices guide](https://dortania.github.io/OpenCore-Post-Install/universal/iservices.html)
+   * Follow [Dortania iServices guide](https://dortania.github.io/OpenCore-Post-Install/universal/iservices.html) to generate your own SMBIOS.
    * For macOS 15 and macOS 26, need to install [VMHide.kext](https://github.com/Carnations-Botanica/VMHide)
 
 ### 3. For smooth GUI performance and 3D acceleration
@@ -257,7 +263,9 @@ Contributions are welcome! Please feel free to submit a pull request. For major 
 
 ## License & Attribution
 
-This project is licensed under the MIT License (see [LICENSE](LICENSE) file). This also includes components from Acidanthera and other developers, each with their own licenses. All third-party components retain their original licenses.
+This project is licensed under the MIT License (see [LICENSE](LICENSE) file).
+
+It also includes components from Acidanthera and other developers, each with their own licenses. All third-party components retain their original licenses.
 
 **If you create content using this project** (videos, blog posts, tutorials, articles):
 - Please link back to this repository: `https://github.com/LongQT-sea/OpenCore-ISO`
@@ -266,12 +274,14 @@ This project is licensed under the MIT License (see [LICENSE](LICENSE) file). Th
 Thank you for respecting the work that went into this project!
 
 ## Disclaimer
-This project is provided “as‑is”, without any warranty, for educational and research purposes. In no event shall the authors or contributors be liable for any direct, indirect, incidental, special, or consequential damages arising from use of the project, even if advised of the possibility of such damages.
+This project is provided “as‑is”, without any warranties, and is intended for educational, research, and security testing purposes. In no event shall the authors or contributors be liable for any direct, indirect, incidental, special, or consequential damages arising from use of the project, even if advised of the possibility of such damages.
 
 All product names, trademarks, and registered trademarks are property of their respective owners. All company, product, and service names used in this repository are for identification purposes only.
 
 [^legacy]: No messy custom args needed (no OSK strings, no lengthy `-cpu` parameters) and freely configure CPU core count on AMD CPUs.
 [^osx]: Tested on Proxmox VE 9.
-[^amdcpu]: The `pcid` and `spec-ctrl` flags are Intel-only CPU features.
-[^intel-hedt]: Override the CPUID model to one used in real Macs (e.g., `model=158` → Coffee Lake CPUID model).
-[^haswell]: QEMU Haswell-noTSX CPU model has `stepping=4`, but macOS expects `stepping=3`.
+[^amdcpu1]: The `pcid` and `spec-ctrl` flags are Intel-only CPU features.
+[^amdcpu2]: On macOS 13–26 running on AMD processors, these CPU flags `enforce,+kvm_pv_eoi,+kvm_pv_unhalt` (the default in Proxmox) prevent macOS from booting, so we override them with custom `-cpu` args.
+[^intel-hedt]: Override the CPUID model to one used in real Macs (e.g., `model=158`, which corresponds to the Coffee Lake CPUID model).
+[^haswell]: QEMU Haswell-noTSX CPU model has `stepping=4`, but macOS expects an earlier stepping (below 4).
+[^hostcpu]: This is one of the main reasons I created this project. All other project use `host` when running on supported Intel CPUs.
