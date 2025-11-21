@@ -42,10 +42,6 @@ Also compatible with **libvirt** and **Virt-Manager**.
 * Get the latest OpenCore-ISO: 👉 [Release page](https://github.com/LongQT-sea/OpenCore-ISO/releases)
 * For macOS installers and recovery ISOs: 👉 [LongQT-sea/macos-iso-builder](https://github.com/LongQT-sea/macos-iso-builder)
 
-> [!CAUTION]
-> These iso are **true CD/DVD ISO image**.
-> Add them to your VM as a **CD/DVD drive**, not as a disk. Do **NOT** change **`media=cdrom`** to **`media=disk`** in the VM config.
-
 > [!TIP]
 > Run [**`Create_macOS_ISO.command`**](/Create_macOS_ISO.command) inside your VM to download the full macOS installer from Apple and generate a proper DVD-format macOS installer ISO.
 

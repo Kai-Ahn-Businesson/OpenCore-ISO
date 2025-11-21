@@ -10,7 +10,7 @@ body:
         ## Thanks for suggesting a feature for OpenCore-ISO!
         Your ideas help make this project better for everyone.
         
-        **Have you starred this repo yet?** Show your support and help others find this project!
+        **Have you starred this repo yet?** Show your support by giving it a star!
 
   - type: checkboxes
     attributes:
@@ -42,22 +42,7 @@ body:
       label: Proposed Implementation
       description: How should this work?
     validations:
-      required: true
-
-  - type: dropdown
-    attributes:
-      label: Area
-      options:
-        - OpenCore config
-        - ISO build
-        - Documentation
-        - Scripts
-        - Hardware
-        - Performance
-        - UX
-        - Other
-    validations:
-      required: true
+      required: false
 
   - type: textarea
     attributes:

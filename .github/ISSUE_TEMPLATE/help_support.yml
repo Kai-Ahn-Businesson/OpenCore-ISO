@@ -14,7 +14,7 @@ body:
         - [Existing issues](https://github.com/LongQT-sea/OpenCore-ISO/issues) for similar problems
         - [Discussions](https://github.com/LongQT-sea/OpenCore-ISO/discussions) for community solutions
 
-        **Have you starred this repo yet?** Show your support and help others find this project!
+        **Have you starred this repo yet?** Show your support by giving it a star!
 
   - type: checkboxes
     attributes:
@@ -46,12 +46,31 @@ body:
   - type: textarea
     attributes:
       label: System Info
-      description: Host specs and VM configuration
+      description: Host OS and hardware specs info
       placeholder: |
-        Proxmox/Host: 
-        CPU: 
-        RAM: 
-        VM Config (`qm config VMID`):
+        Host OS: e.g. Proxmox, QEMU/KVM, UTM, TrueNAS, Unraid
+        Mainboard: Z490
+        CPU: i7-10700K
+        RAM: 32GB
+        dGPU: None
+      render: shell
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: VM Config or QEMU cmdline
+      description: Proxmox VM config (`qm config VMID`) or QEMU command line used to start the VM
+      placeholder: |
+        # qm config VMID
+        bios: ovmf
+        machine: q35
+        cpu: Skylake-Client-v4
+        
+        # QEMU cmdline
+        /usr/bin/qemu-system-x86_64 -accel kvm -machine q35 -m 4096 \
+          -cpu Skylake-Client-noTSX-IBRS,vendor=GenuineIntel \
+          -usb -device usb-tablet -device usb-kbd \
       render: shell
     validations:
       required: true
@@ -72,15 +91,7 @@ body:
 
   - type: textarea
     attributes:
-      label: Error Messages/Logs
-      description: Include relevant errors or logs
-      render: shell
-    validations:
-      required: false
-
-  - type: textarea
-    attributes:
       label: Additional Context
-      description: Screenshots or other details
+      description: Screenshots or other details (relevant errors or logs)
     validations:
       required: false
