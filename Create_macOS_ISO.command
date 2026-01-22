@@ -1,11 +1,10 @@
 #!/usr/bin/env bash
-# Wrapper launcher for mkmaciso
+# Simple launcher for mkmaciso
 set -e
 
 MKMACISO_URL="https://raw.githubusercontent.com/LongQT-sea/mkmaciso/main/mkmaciso"
 LOCAL_BIN="$HOME/.local/bin"
 TARGET="$LOCAL_BIN/mkmaciso"
-ZSHRC="$HOME/.zshrc"
 EXPORT_LINE='export PATH="$HOME/.local/bin:$PATH"'
 
 # Install mkmaciso if missing
@@ -17,8 +16,14 @@ fi
 
 # Ensure ~/.local/bin is in PATH
 if [[ ":$PATH:" != *":$LOCAL_BIN:"* ]]; then
-    touch "$ZSHRC"
-    grep -qxF "$EXPORT_LINE" "$ZSHRC" || echo "$EXPORT_LINE" >> "$ZSHRC"
+    case "$SHELL" in
+      */zsh)  RC="$HOME/.zprofile" ;;
+      */bash) RC="$HOME/.bash_profile" ;;
+      *)      RC="$HOME/.profile" ;;
+    esac
+    
+    touch "$RC"
+    grep -qxF "$EXPORT_LINE" "$RC" || printf '\n%s\n' "$EXPORT_LINE" >> "$RC"
 fi
 
 exec "$TARGET" "$@"
