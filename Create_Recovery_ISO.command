@@ -23,18 +23,9 @@ fi
 get_version_info() {
     local key=$1
     case $key in
-        lion1) echo "Mac-2E6FAB96566FE58C:00000000000F25Y00:Lion:" ;;
-        lion2) echo "Mac-C3EC7CD22292981F:00000000000F0HM00:Lion:" ;;
-        mountain_lion) echo "Mac-7DF2A3B5E5D671ED:00000000000F65100:Mountain_Lion:" ;;
-        mavericks) echo "Mac-F60DEB81FF30ACF6:00000000000FNN100:Mavericks:" ;;
-        yosemite) echo "Mac-E43C1C25D4880AD6:00000000000GDVW00:Yosemite:" ;;
-        el_capitan) echo "Mac-FFE5EF870D7BA81A:00000000000GQRX00:El_Capitan:" ;;
-        sierra) echo "Mac-77F17D7DA9285301:00000000000J0DX00:Sierra:" ;;
-        high_sierra1) echo "Mac-7BA5B2D9E42DDD94:00000000000J80300:High_Sierra:" ;;
-        high_sierra2) echo "Mac-BE088AF8C5EB4FA2:00000000000J80300:High_Sierra:" ;;
+        high_sierra) echo "Mac-7BA5B2D9E42DDD94:00000000000J80300:High_Sierra:" ;;
         mojave) echo "Mac-7BA5B2DFE22DDD8C:00000000000KXPG00:Mojave:" ;;
-        catalina1) echo "Mac-CFF7D910A743CAAF:00000000000PHCD00:Catalina:" ;;
-        catalina2) echo "Mac-00BE6ED71E35EB86:00000000000000000:Catalina:" ;;
+        catalina) echo "Mac-CFF7D910A743CAAF:00000000000PHCD00:Catalina:" ;;
         big_sur) echo "Mac-2BD1B31983FE1663:00000000000000000:Big_Sur:" ;;
         monterey) echo "Mac-E43C1C25D4880AD6:00000000000000000:Monterey:" ;;
         ventura) echo "Mac-B4831CEBD52A0C4C:00000000000000000:Ventura:" ;;
@@ -64,7 +55,7 @@ check_python() {
         print_error "Python3 is not installed on your system."
         echo "Please install Python3:"
         echo "Download it from: https://www.python.org/downloads/"
-		echo "Or use Install_Python3.command to do it automatically"
+        echo "Or use Install_Python3.command to do it automatically"
         exit 1
     fi
 }
@@ -95,38 +86,6 @@ cleanup_recovery() {
     fi
 }
 
-# Function to determine recovery image filename based on version
-get_recovery_filename() {
-    local version_name=$1
-    
-    # macOS 10.4 to 10.12 use RecoveryImage.dmg
-    # macOS 10.13+ use BaseSystem.dmg
-    case $version_name in
-        Lion|Mountain_Lion|Mavericks|Yosemite|El_Capitan|Sierra)
-            echo "RecoveryImage.dmg"
-            ;;
-        *)
-            echo "BaseSystem.dmg"
-            ;;
-    esac
-}
-
-# Function to determine hdiutil options based on version
-get_hdiutil_options() {
-    local version_name=$1
-    
-    # macOS 10.7 to 10.9 require -hfs -iso -joliet
-    # macOS 10.10+ use -hfs -udf
-    case $version_name in
-        Lion|Mountain_Lion|Mavericks)
-            echo "-hfs -iso -joliet"
-            ;;
-        *)
-            echo "-hfs -udf"
-            ;;
-    esac
-}
-
 # Function to download macOS recovery
 download_recovery() {
     local board_id=$1
@@ -142,8 +101,8 @@ download_recovery() {
         python3 macrecovery.py -b "$board_id" -m "$model" download
     fi
     
-    # Check which recovery image was downloaded
-    if [ ! -f "com.apple.recovery.boot/BaseSystem.dmg" ] && [ ! -f "com.apple.recovery.boot/RecoveryImage.dmg" ]; then
+    # Check if BaseSystem.dmg was downloaded (all versions 10.13+ use BaseSystem.dmg)
+    if [ ! -f "com.apple.recovery.boot/BaseSystem.dmg" ]; then
         print_error "Failed to download recovery image"
         exit 1
     fi
@@ -155,11 +114,9 @@ download_recovery() {
 create_iso() {
     local version_name=$1
     local output_path="$HOME/Desktop/macOS_${version_name}_Recovery.iso"
-    local recovery_filename=$(get_recovery_filename "$version_name")
-    local recovery_path="com.apple.recovery.boot/$recovery_filename"
-    local hdiutil_opts=$(get_hdiutil_options "$version_name")
+    local recovery_path="com.apple.recovery.boot/BaseSystem.dmg"
     
-    # Check if the expected recovery file exists
+    # Check if the recovery file exists
     if [ ! -f "$recovery_path" ]; then
         print_error "Recovery image not found at: $recovery_path"
         # List available files for debugging
@@ -170,7 +127,8 @@ create_iso() {
     
     print_info "Creating bootable ISO..."
 
-    hdiutil makehybrid -ov $hdiutil_opts \
+    # All versions 10.13+ use -hfs -udf options
+    hdiutil makehybrid -ov -hfs -udf \
         -default-volume-name "${version_name}_Recovery" \
         -o "$output_path" \
         "$recovery_path"
@@ -188,21 +146,15 @@ show_versions() {
     echo ""
     echo "Available macOS versions:"
     echo "========================="
-    echo "  1. Lion (10.7)"
-    echo "  2. Mountain Lion (10.8)"
-    echo "  3. Mavericks (10.9)"
-    echo "  4. Yosemite (10.10)"
-    echo "  5. El Capitan (10.11)"
-    echo "  6. Sierra (10.12)"
-    echo "  7. High Sierra (10.13)"
-    echo "  8. Mojave (10.14)"
-    echo "  9. Catalina (10.15)"
-    echo " 10. Big Sur (11)"
-    echo " 11. Monterey (12)"
-    echo " 12. Ventura (13)"
-    echo " 13. Sonoma (14)"
-    echo " 14. Sequoia (15)"
-    echo " 15. Tahoe (Latest)"
+    echo "  1. High Sierra (10.13)"
+    echo "  2. Mojave (10.14)"
+    echo "  3. Catalina (10.15)"
+    echo "  4. Big Sur (11)"
+    echo "  5. Monterey (12)"
+    echo "  6. Ventura (13)"
+    echo "  7. Sonoma (14)"
+    echo "  8. Sequoia (15)"
+    echo "  9. Tahoe (Latest)"
     echo ""
 }
 
@@ -211,49 +163,31 @@ process_version() {
     local version=$1
     
     case $version in
-        1|lion)
-            key="lion1"
+        1|high_sierra)
+            key="high_sierra"
             ;;
-        2|mountain_lion)
-            key="mountain_lion"
-            ;;
-        3|mavericks)
-            key="mavericks"
-            ;;
-        4|yosemite)
-            key="yosemite"
-            ;;
-        5|el_capitan)
-            key="el_capitan"
-            ;;
-        6|sierra)
-            key="sierra"
-            ;;
-        7|high_sierra)
-            key="high_sierra1"
-            ;;
-        8|mojave)
+        2|mojave)
             key="mojave"
             ;;
-        9|catalina)
-            key="catalina1"
+        3|catalina)
+            key="catalina"
             ;;
-        10|big_sur)
+        4|big_sur)
             key="big_sur"
             ;;
-        11|monterey)
+        5|monterey)
             key="monterey"
             ;;
-        12|ventura)
+        6|ventura)
             key="ventura"
             ;;
-        13|sonoma)
+        7|sonoma)
             key="sonoma"
             ;;
-        14|sequoia)
+        8|sequoia)
             key="sequoia"
             ;;
-        15|tahoe)
+        9|tahoe)
             key="tahoe"
             ;;
         *)
@@ -284,12 +218,12 @@ show_usage() {
 Usage: $0 [OPTIONS]
 
 Options:
-  -v, --version <number|name>  macOS version to download (1-15 or name)
+  -v, --version <number|name>  macOS version to download (1-9 or name)
   -h, --help                   Show this help message
 
 Examples:
   $0                           # Interactive mode
-  $0 -v 9                      # Download Catalina
+  $0 -v 3                      # Download Catalina
   $0 -v catalina               # Download Catalina by name
   $0 -v sonoma                 # Download Sonoma by name
 
@@ -318,7 +252,7 @@ main() {
     if [ $# -eq 0 ]; then
         # Interactive mode
         show_versions
-        read -p "Select version (1-15): " version_choice
+        read -p "Select version (1-9): " version_choice
         echo ""
         process_version "$version_choice"
     else
