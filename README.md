@@ -2,17 +2,13 @@
 
 A carefully crafted OpenCore **ISO** image that makes creating macOS virtual machines on **Proxmox VE** and **QEMU/KVM** straightforward.
 
-Completely redesigned from scratch with a clean, efficient architecture that eliminates outdated methods and legacy configurations.[^legacy]
+Completely redesigned from scratch with a clean, efficient architecture that eliminates outdated methods and legacy configurations.
 
-Supports every Intel-based macOS release, from **Mac OS X 10.4 Tiger** through **macOS 26 Tahoe**.[^osx]
-
-Also compatible with **libvirt** and **Virt-Manager**.
+Supports every Intel-based macOS release, from **Mac OS X 10.4 Tiger** through **macOS 26 Tahoe**.
 
 > [!TIP]
 > Enjoy true **vanilla macOS** experience with no kernel patches.
 > This is likely the best way to run macOS on AMD hardware while still retaining full hypervisor access to run other VMs.
-
-**Found this useful?** Give it a ⭐ star so others can find it too!
 
 ## Table of Contents
 
@@ -176,6 +172,8 @@ Add an **additional CD/DVD drive** for the macOS installer or Recovery ISO, then
 > * First-time installing macOS? Format the disk in **Disk Utility** before installing macOS.
 > * **Skip iCloud login** during setup (configure it later, see [Post-Install](#post-install))
 
+**Got it running?** Maybe give the repo a star... nah nevermind, do whatever.
+
 ### 10. Troubleshooting
 
 If you encounter boot issues, check:
@@ -283,8 +281,6 @@ This project is provided “as‑is”, without any warranties, and is intended 
 
 All product names, trademarks, and registered trademarks are property of their respective owners. All company, product, and service names used in this repository are for identification purposes only.
 
-[^legacy]: No messy custom args needed (no OSK strings, no lengthy `-cpu` parameters) and freely configure CPU core count on AMD CPUs.
-[^osx]: Tested on Proxmox VE 9.
 [^amdcpu1]: The `pcid` and `spec-ctrl` flags are Intel-only CPU features.
 [^amdcpu2]: On macOS 13–26 running on AMD processors, these CPU flags `enforce,+kvm_pv_eoi,+kvm_pv_unhalt` (the default in Proxmox) prevent macOS from booting, so we override them with custom `-cpu` args.
 [^intel-hedt]: Override the CPUID model to one used in real Macs (e.g., `model=158`, which corresponds to the Coffee Lake CPUID model).
